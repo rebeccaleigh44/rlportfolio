@@ -11,10 +11,13 @@ subtitle: The Navy Federal design system
 teaser: Rebuilding the component library a whole digital banking org designs from.
 year: '[2025]'
 sector: Banking
-palette: ['#2340c9', '#8fa9ff', '#93e0d3', '#dfe6f7']
+palette: ['#0a6fd8', '#0b2a5e', '#7fb6ff', '#0a4fa8']
+logo: nfcu
+card: /work/navy-federal/card.webp
 cover:
-  alt: Navy Federal design system components laid out across light and dark themes
-  ratio: '16 / 9'
+  src: /work/navy-federal/cover.webp
+  alt: The Cmd+R design system documentation site, open to the Typography foundations page
+  ratio: '1800 / 945'
 
 tldr:
   - The old system had drifted. Teams were rebuilding the same button [six] different ways, and accessibility support depended on who built the screen.

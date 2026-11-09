@@ -15,6 +15,8 @@ const figure = z.object({
   caption: z.string().optional(),
   ratio: z.string().default('16 / 10'), // CSS aspect-ratio
   device: z.enum(['none', 'phone', 'browser']).default('none'),
+  // 'contain' shows the whole image centred on a soft gradient in the project colours
+  fit: z.enum(['cover', 'contain']).default('cover'),
 });
 
 const stat = z.object({ value: z.string(), label: z.string() });
@@ -33,6 +35,8 @@ const work = defineCollection({
     sector: z.string(),
     palette: z.array(z.string()).length(4), // four colours for this project's gradient
     cover: figure,
+    card: z.string().optional(), // tall project card image, used on the home page and in "more work"
+    logo: z.enum(['nfcu', 'sentara', 'hivemindd', 'hivemindd-white', 'i3verticals', 'edjit', 'nforce']).optional(),
     draft: z.boolean().default(false),
 
     // 2. Quick read

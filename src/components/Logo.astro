@@ -1,0 +1,34 @@
+---
+/**
+ * Client logos, inlined so they pick up the surrounding text colour.
+ * The source files are flat grey (#7B7B7A); that fill is swapped for currentColor.
+ */
+import nfcu from '../assets/logos/nfcu.svg?raw';
+import sentara from '../assets/logos/sentara.svg?raw';
+import hivemindd from '../assets/logos/hivemindd.svg?raw';
+import i3verticals from '../assets/logos/i3verticals.svg?raw';
+import edjit from '../assets/logos/edjit.svg?raw';
+import nforce from '../assets/logos/nforce.svg?raw';
+
+export const logos = { nfcu, sentara, hivemindd, i3verticals, edjit, nforce } as const;
+export const logoNames: Record<string, string> = {
+  nfcu: 'Navy Federal Credit Union',
+  sentara: 'Sentara',
+  hivemindd: 'Hivemindd',
+  i3verticals: 'i3 Verticals',
+  edjit: 'EdJit',
+  nforce: 'nForce AI',
+};
+
+interface Props { name: keyof typeof logos; height?: string; class?: string; }
+const { name, height = '1.75rem', class: cls } = Astro.props;
+const svg = logos[name]
+  .replace(/fill="#7B7B7A"/gi, 'fill="currentColor"')
+  .replace(/<svg /, `<svg role="img" aria-label="${logoNames[name]}" focusable="false" `);
+---
+<span class:list={['logo', cls]} style={`--h:${height}`} set:html={svg} />
+
+<style>
+  .logo { display: inline-flex; align-items: center; height: var(--h); }
+  .logo :global(svg) { height: 100%; width: auto; }
+</style>

@@ -7,7 +7,7 @@ const work = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b
 const year = new Date().getFullYear();
 ---
 <footer class="footer" id="contact">
-  <GradientField variant="hills" colors={['#b9a8f2', '#f2715f', '#93e0d3', '#2d4be0']} />
+  <GradientField variant="hills" colors={['#4f6cf2', '#f2715f', '#2d4be0', '#1b2585']} />
   <div class="wrap footer__inner">
     <div class="lead">
       <a href="/" class="home" aria-label="Rebecca Leigh, home"><Wordmark /></a>
@@ -42,12 +42,12 @@ const year = new Date().getFullYear();
     overflow: hidden;
     padding-top: clamp(4rem, 10vw, 7rem);
     padding-bottom: clamp(14rem, 34vw, 26rem);
-    background: linear-gradient(to bottom, var(--mist), #f1eef6 60%);
+    background: linear-gradient(to bottom, var(--mist), #eceefb 70%);
   }
   .footer :global(.field) {
     z-index: -1;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 35%, #000 70%);
-    mask-image: linear-gradient(to bottom, transparent 35%, #000 70%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 42%, #000 72%);
+    mask-image: linear-gradient(to bottom, transparent 42%, #000 72%);
   }
   .footer__inner { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem 4rem; }
   .home { text-decoration: none; }

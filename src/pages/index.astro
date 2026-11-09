@@ -2,14 +2,15 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import GradientField from '../components/GradientField.astro';
+import Logo from '../components/Logo.astro';
 import { site } from '../site.config';
 
 const work = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
-const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemindd', 'EdJit'];
+const clients = ['nfcu', 'sentara', 'i3verticals', 'hivemindd', 'edjit'] as const;
 ---
 <Base>
   <section class="hero">
-    <div class="hero__panel">
+    <div class="hero__panel scrim">
       <GradientField interactive />
       <div class="hero__copy wrap">
         <h1>I design software that feels human.</h1>
@@ -31,6 +32,7 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
             class="row"
             href={`/work/${w.id}/`}
             style={`--a:${w.data.palette[0]};--b:${w.data.palette[1]};--c:${w.data.palette[2]};--d:${w.data.palette[3]};`}
+            data-card={w.data.card}
           >
             <span class="swatch" aria-hidden="true"></span>
             <span class="row__client">{w.data.client}</span>
@@ -57,12 +59,14 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
       </p>
       <div class="clients">
         <h3>Teams I've worked with</h3>
-        <ul role="list">{clients.map((c) => <li>{c}</li>)}</ul>
+        <ul role="list" class="logos">{clients.map((c) => <li><Logo name={c} height={c === 'edjit' ? '2.4rem' : c === 'nfcu' ? '1.5rem' : '1.75rem'} /></li>)}</ul>
       </div>
     </div>
   </section>
 
   <div class="peek" aria-hidden="true"><div class="grain"></div></div>
+  <!-- Preload card images so the hover preview never flashes empty -->
+  {work.filter((w) => w.data.card).map((w) => <link rel="prefetch" href={w.data.card} as="image" />)}
 </Base>
 
 <style>
@@ -72,7 +76,7 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
   .hero__panel {
     position: relative;
     isolation: isolate;
-    min-height: min(88svh, 60rem);
+    min-height: min(calc(100svh - 6.5rem), 60rem);
     border-radius: clamp(20px, 2.4vw, 36px);
     overflow: hidden;
     display: flex;
@@ -80,9 +84,9 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
     color: var(--white);
   }
   .hero__panel :global(.field) { z-index: -1; }
-  .hero__copy { padding-bottom: clamp(2rem, 6vw, 5rem); }
+  .hero__copy { padding-block: clamp(7rem, 14vh, 10rem) clamp(3rem, 7vh, 5.5rem); }
   h1 {
-    font-size: var(--t-hero);
+    font-size: min(var(--t-hero), 15vh);
     font-weight: 600;
     line-height: 0.95;
     letter-spacing: -0.035em;
@@ -166,6 +170,10 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
       var(--d, #f9cda6);
   }
   .peek.on { opacity: 1; scale: 1; }
+  .peek img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+  .peek.has-card { background: none; border-radius: 0; width: 17rem; aspect-ratio: 562 / 845; filter: drop-shadow(0 30px 40px rgba(20, 24, 70, 0.28)); }
+  .peek.has-card img { opacity: 1; }
+  .peek.has-card .grain { display: none; }
   @media (hover: none) { .peek { display: none; } }
 
   /* About: label on the left, words on the right */
@@ -185,8 +193,9 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
   }
   .clients { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline); }
   .clients h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; letter-spacing: 0; margin-bottom: 0.75rem; }
-  .clients ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .clients li { padding: 0.3rem 0.85rem; border: 1px solid var(--hairline); border-radius: 999px; font-size: var(--t-sm); }
+  .logos { list-style: none; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2.25rem; margin-top: 1.25rem; color: var(--ink-soft); }
+  .logos li { display: flex; align-items: center; opacity: 0.85; transition: opacity 0.2s, color 0.2s; }
+  .logos li:hover { opacity: 1; color: var(--ink); }
   @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
 </style>
 
@@ -200,12 +209,17 @@ const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemin
     const loop = () => {
       cx += (x - cx) * 0.16; cy += (y - cy) * 0.16;
       peek.style.setProperty('--x', `${cx + 28}px`);
-      peek.style.setProperty('--y', `${cy - 150}px`);
+      peek.style.setProperty('--y', `${Math.max(72, cy - (peek.classList.contains('has-card') ? 200 : 150))}px`);
       raf = requestAnimationFrame(loop);
     };
     rows.forEach((row) => {
       row.addEventListener('pointerenter', (e) => {
         ['--a', '--b', '--c', '--d'].forEach((v) => peek.style.setProperty(v, row.style.getPropertyValue(v)));
+        const card = row.dataset.card;
+        let img = peek.querySelector('img');
+        if (!img) { img = document.createElement('img'); img.alt = ''; peek.append(img); }
+        peek.classList.toggle('has-card', !!card);
+        if (card) img.src = card; else img.removeAttribute('src');
         if (!raf) { cx = x = e.clientX; cy = y = e.clientY; raf = requestAnimationFrame(loop); }
         peek.classList.add('on');
       });

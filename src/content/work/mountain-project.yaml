@@ -7,10 +7,13 @@ subtitle: '[The Mountain Project ____ experience]'
 teaser: '[One line on what you designed for climbers.]'
 year: '[2024]'
 sector: Outdoors
-palette: ['#2f6b4f', '#f29c5f', '#9cc9b4', '#f3e6d6']
+palette: ['#2a5378', '#e8743b', '#8cc49a', '#14293f']
+card: /work/mountain-project/card.webp
 cover:
-  alt: '[Mountain Project screens on a phone at the crag]'
+  src: /work/mountain-project/card.webp
+  alt: Mountain Project app screens showing a profile, a crag map around Fayetteville, and a to-do list
   ratio: '16 / 9'
+  fit: contain
 
 tldr:
   - '[The climber problem in one sentence.]'

@@ -7,10 +7,14 @@ subtitle: '[The Hivemindd ____ experience]'
 teaser: '[One line on what you designed and for whom.]'
 year: '[2025]'
 sector: '[Sector]'
-palette: ['#e9a92e', '#f2715f', '#ffe3a3', '#fbefd9']
+palette: ['#2b2ff0', '#4a4a56', '#8a96ff', '#141418']
+logo: hivemindd-white
+card: /work/hivemindd/card.webp
 cover:
-  alt: '[Describe the cover image]'
+  src: /work/hivemindd/card.webp
+  alt: Hivemindd brand card with a glowing scan-line visual
   ratio: '16 / 9'
+  fit: contain
 
 tldr:
   - '[The problem in one sentence.]'

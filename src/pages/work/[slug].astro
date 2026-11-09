@@ -13,6 +13,7 @@ import Figure from '../../components/Figure.astro';
 import Decision from '../../components/Decision.astro';
 import BeforeAfter from '../../components/BeforeAfter.astro';
 import Walkthrough from '../../components/Walkthrough.astro';
+import Logo from '../../components/Logo.astro';
 
 export async function getStaticPaths() {
   const work = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
@@ -51,10 +52,16 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
 
     <!-- 1. Hero -->
     <header class="cs-hero">
-      <div class="cs-hero__panel">
+      <div class="cs-hero__panel scrim">
         <GradientField colors={pal} interactive variant="soft" />
         <div class="wrap cs-hero__inner">
-          <p class="cs-hero__client">{d.client}</p>
+          <p class="cs-hero__client">
+            {d.logo === 'hivemindd-white' ? (
+              <img src="/logos/hivemindd-white.svg" alt={d.client} class="cs-hero__logo-img" />
+            ) : d.logo ? (
+              <Logo name={d.logo} height={d.logo === 'edjit' || d.logo === 'nforce' ? '2.6rem' : '2rem'} />
+            ) : d.client}
+          </p>
           <h1>{d.title}</h1>
           <p class="cs-hero__sub">{d.subtitle}</p>
         </div>
@@ -132,7 +139,7 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
 
         <!-- 6. Impact -->
         {d.impact && (
-          <section id="impact" class="sec impact">
+          <section id="impact" class="sec impact scrim">
             <div class="impact__field"><GradientField colors={pal} variant="soft" /></div>
             <h2>What changed</h2>
             <dl class="impact__grid">
@@ -268,7 +275,10 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
       <div class="more__grid">
         {more.map((m) => (
           <a class="more__card" href={`/work/${m.id}/`}>
-            <div class="more__swatch"><GradientField colors={m.data.palette} variant="soft" /></div>
+            <div class="more__swatch">
+              <GradientField colors={m.data.palette} variant="soft" />
+              {m.data.card && <img src={m.data.card} alt="" loading="lazy" />}
+            </div>
             <span class="more__client">{m.data.client}</span>
             <span class="more__teaser">{m.data.teaser}</span>
           </a>
@@ -291,9 +301,10 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
   }
   .cs-hero__panel :global(.field) { z-index: -1; }
   .cs-hero__inner { padding-top: 6rem; }
-  .cs-hero__client { font-weight: 600; font-size: 1rem; }
+  .cs-hero__client { font-weight: 600; font-size: 1rem; color: var(--white); }
+  .cs-hero__logo-img { height: 2rem; width: auto; }
   h1 {
-    font-size: var(--t-2xl);
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
     font-weight: 600;
     max-width: 16ch;
     margin-top: 0.75rem;
@@ -390,7 +401,7 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
   .stats { align-items: flex-start; }
   .stats div { display: flex; flex-direction: column; }
   .stats dd { order: -1; }
-  .stats dd { margin: 0; font-family: var(--serif); font-size: var(--t-2xl); font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--p1); }
+  .stats dd { font-variant-numeric: lining-nums; margin: 0; font-family: var(--serif); font-size: var(--t-2xl); font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--p1); }
   .stats dt { color: var(--ink-soft); max-width: 18ch; margin-top: 0.4rem; }
 
   .process { list-style: none; padding: 0; counter-reset: step; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.5rem; }
@@ -412,7 +423,7 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
   .impact__grid dd { margin: 0; }
   .impact__value { font-family: var(--serif); font-size: var(--t-2xl); font-weight: 600; line-height: 1; letter-spacing: -0.03em; }
   .impact__grid dt { margin-top: 0.5rem; font-weight: 500; }
-  .impact__detail { font-size: var(--t-sm); opacity: 0.85; margin-top: 0.25rem !important; }
+  .impact__detail { font-size: var(--t-sm); margin-top: 0.25rem !important; }
 
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border-radius: 20px; overflow: hidden; }
   .split > div { background: rgba(255, 255, 255, 0.55); padding: 1.5rem; display: grid; gap: 0.6rem; align-content: start; }
@@ -444,6 +455,13 @@ const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highli
     transition: border-radius 0.6s var(--ease);
   }
   .more__card:hover .more__swatch { border-radius: 24px; }
+  .more__swatch img {
+    position: absolute; left: 50%; bottom: -18%; height: 112%; width: auto;
+    translate: -50% 0;
+    filter: drop-shadow(0 20px 30px rgba(20, 24, 70, 0.3));
+    transition: translate 0.6s var(--ease);
+  }
+  .more__card:hover .more__swatch img { translate: -50% -6%; }
   .more__client { font-family: var(--serif); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; }
   .more__card:hover .more__client { text-decoration: underline; }
   .more__teaser { color: var(--ink-soft); }

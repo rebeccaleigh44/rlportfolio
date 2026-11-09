@@ -7,10 +7,14 @@ subtitle: Agentic claims search at Sentara
 teaser: An AI search assistant that helps staff find claims by describing the problem.
 year: '[2025]'
 sector: Healthcare
-palette: ['#2f7fc9', '#93e0d3', '#cfe9c4', '#edf3f0']
+palette: ['#2f7a62', '#ffd75e', '#5fae93', '#1f5646']
+logo: sentara
+card: /work/sentara/card.webp
 cover:
-  alt: Claims search interface with a conversational query and ranked results
+  src: /work/sentara/card.webp
+  alt: Sentara claims list with a primary care bill and its status
   ratio: '16 / 9'
+  fit: contain
 
 tldr:
   - Staff searching claims had to know exact IDs and codes before they could find anything. Most of the time, they didn't.
@@ -87,6 +91,15 @@ iterations:
     body: The first version streamed every step. It felt busy and a little anxious. We collapsed it to a summary line that expands on demand.
     before: { alt: Search results with a long streaming reasoning log, ratio: '4 / 3' }
     after: { alt: Search results with a single collapsible reasoning summary, ratio: '4 / 3' }
+
+hifi:
+  - title: Claims at a glance
+    body: '[What changed in how claims are listed, and why status and amount owed sit up top.]'
+    figures:
+      - src: /work/sentara/cover.webp
+        alt: Claim cards for primary care, specialist care and an ED visit, each with a status and service date
+        ratio: '4 / 3'
+        fit: contain
 
 walkthrough:
   device: browser

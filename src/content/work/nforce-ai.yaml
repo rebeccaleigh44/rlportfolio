@@ -1,69 +1,189 @@
-# Nforce AI: marketing site
-# [Square brackets] = placeholder. Swap or delete.
+# Nforce AI: website redesign and rebuild
+# Written from the latest build of the site (nforceai-site with the
+# "nforceai-site 3" updates). [Square brackets] = something only you know.
 order: 4
-client: Nforce AI
-title: '[Headline: what the new site does for Nforce AI]'
-subtitle: The Nforce AI website
-teaser: '[One line on the site and who it was built for.]'
+client: nForce AI
+title: Making fraud detection make sense to the people who buy it
+subtitle: The nForce AI website
+teaser: A new design system and site for an AI company that finds fraud in government data.
 year: '2026'
-sector: AI
-palette: ['#5b3df0', '#f2715f', '#b9a8f2', '#ece8fb']
+sector: AI and government
+palette: ['#2b3358', '#d17453', '#c49832', '#131d36']
+logo: nforce
+card: /work/nforce-ai/card.webp
 cover:
-  alt: Nforce AI homepage on desktop and mobile
-  ratio: '16 / 9'
+  src: /work/nforce-ai/home.webp
+  alt: The nForce AI homepage, with the headline "Find the fraud hiding in public data" beside a mosaic of rounded gradient shapes
+  ratio: '16 / 10'
+  device: browser
 
 tldr:
-  - '[What Nforce AI needed from a website.]'
-  - '[What you designed and built.]'
-  - '[What changed after launch.]'
+  - nForce AI sells anomaly and fraud detection to U.S. agencies, but the old Webflow site didn't explain what the product actually does, and a few pages were still lorem ipsum.
+  - I built a design system around one idea, signal from noise, then designed and rebuilt every page in Astro, keeping each old URL so nothing broke in search.
+  - The site launched with an interactive "see how a flag is explained" demo, a training chooser, a contact form that stores nothing, and zero Impeccable anti-patterns on every page.
 
 overview: >-
-  [What Nforce AI does, who the site is for, and why the old one (or no site at all) wasn't cutting it.]
+  nForce AI is a women-owned small business that helps U.S. agencies spot anomalies, stop improper
+  payments and explain every finding well enough to survive an audit. That last part is the whole
+  pitch, and the old site buried it. The people buying this are auditors and program leads. They
+  don't want magic. They want to see the receipt.
 
 meta:
-  role: [Web design, Visual design, Copy, '[Build]']
-  team: ['[Collaborator]']
+  role: [Design system, Web design, Content design, Front-end build]
+  team: ['[nForce AI founders]', '[Other collaborators]']
   duration: '[X weeks]'
-  tools: [Figma, '[Framework]', Vercel]
+  tools: [Figma, Astro, Vercel, Impeccable]
 
 problem:
-  question: '[How might we explain a complicated AI product to people who have ten seconds to decide if it is for them?]'
+  question: How might we show a skeptical government buyer that an AI flag can be traced, checked and defended, before they ever book a call?
+  stats:
+    - value: '3'
+      label: blog pages on the old site that were still lorem ipsum
+    - value: '[X]'
+      label: '[pages on the old Webflow site]'
 
 process:
-  - phase: Positioning
-    detail: '[What you learned about the audience and message]'
-  - phase: Structure
-    detail: '[Sitemap and page priorities]'
-  - phase: Visual direction
-    detail: '[How the look came together]'
-  - phase: Build and launch
-    detail: '[How it shipped]'
+  - phase: Audit
+    detail: Went through the Webflow site page by page and mapped every URL, so the rebuild could match them slug for slug.
+  - phase: Design system
+    detail: Wrote DESIGN.md first. Color, type, spacing, shapes and motion, all in one file the code is checked against.
+  - phase: Pages
+    detail: Rewrote and rebuilt each page, homepage and solution pages first, then resources, case studies and legal.
+  - phase: Polish and launch
+    detail: SEO, accessibility and an Impeccable pass on every page, then handover with a launch checklist.
+
+impact:
+  - value: '0'
+    label: Impeccable anti-patterns on any page at handover
+  - value: '100%'
+    label: of old URLs kept or redirected
+    detail: The three lorem ipsum blog posts now redirect to a real resource page.
+  - value: '[X]'
+    label: '[Inquiries, time on page or another result after launch]'
+
+context:
+  heading: Why the explanation is the product
+  body: >-
+    Government fraud teams are drowning in false alarms. A tool that flags more things isn't the
+    answer. A tool that tells you why it flagged something, and lets a person sign off before
+    anyone acts, is. So the site had to prove explainability, not just claim it.
 
 challenges:
-  user: '[What visitors struggled with]'
-  business: '[What the company needed the site to do]'
+  user: Agency buyers landed on a site full of AI buzzwords and couldn't tell what the product does, how it decides, or whether a finding would hold up.
+  business: nForce needed to look credible next to much bigger government contractors, with a small team and a site they could keep up themselves.
+
+stakes:
+  - title: Credibility
+    body: In government sales, a vague website reads as a vague product.
+  - title: Search
+    body: Changing URLs during a rebuild can quietly throw away years of search ranking.
+  - title: Trust
+    body: An AI company that hides how its AI works is a hard sell to an auditor.
+
+reframe:
+  hmw: How might we let buyers watch a flag get explained, instead of telling them it can be?
+  highlight: watch a flag get explained
+  userNeeds: [See what the product does in plain words, Trace a finding back to its evidence, Find the right service fast]
+  businessNeeds: [Look established next to big contractors, Keep search traffic through the rebuild, A site the team can update without a developer]
+
+scope:
+  body: >-
+    The rebuild covered every page on the old site: the homepage, four solution pages, about, responsible AI,
+    NAICS codes, resources, two case studies, contact and legal. New features were kept small and vanilla,
+    so every page still works with JavaScript turned off.
+
+ideation:
+  body: >-
+    The creative idea came from the product itself: signal from noise. Calm navy and linen fields with
+    grain and translucent overlapping shapes, and exactly one gold circle in every composition. That
+    gold circle is the anomaly, the thing nForce found. It shows up in every hero, and once you notice
+    it you see it everywhere.
+  figures:
+    - src: /work/nforce-ai/training.webp
+      alt: AI training page hero, with rounded gradient blocks and a single gold circle among them
+      device: browser
+    - src: /work/nforce-ai/anomaly.webp
+      alt: Anomaly detection page hero, with the same shape kit arranged differently
+      device: browser
 
 decisions:
-  - title: '[Hero approach]'
-    question: '[Lead with the product, or the problem?]'
+  - title: How to prove explainability
+    question: Describe it in copy, or let people try it?
     options:
-      - label: '[Product first]'
-        body: '[Why not]'
-      - label: '[Problem first]'
+      - label: Describe it
+        body: A paragraph about explainable AI is exactly what every competitor already has. It doesn't prove anything.
+      - label: An interactive example
         chosen: true
-        body: '[Why this one]'
+        body: >-
+          "See how a flag is explained" lists eight payments. Pick a flagged one and it shows the business rule
+          that fired, the model signal behind it and where human review stands. It uses invented data and says so.
+        figure:
+          src: /work/nforce-ai/flag-explorer.webp
+          alt: Payment list with three flagged payments; the selected one shows its business rule, model signal and human review status
+          ratio: '1320 / 900'
+  - title: Dark or light sections
+    question: Navy blocks for drama, or light grounds throughout?
+    options:
+      - label: Dark navy sections
+        body: '[Why the dark sections came out. For example: they felt heavy, made long pages tiring to read, or competed with the shapes.]'
+      - label: Light linen gradients
+        chosen: true
+        body: Every former dark section moved to a cream to lavender gradient with grain. Navy is kept for type, shapes and the footer, so it still anchors the page.
 
 hifi:
-  - title: Key pages
-    body: '[Which pages and why they matter]'
+  - title: Built around real content
+    body: Every page is written in plain language for the buyer, with sources cited under every statistic.
     figures:
-      - alt: '[Homepage]'
+      - src: /work/nforce-ai/tools.webp
+        alt: AI tools we love page with category filter pills and a grid of tools
         device: browser
-      - alt: '[Second key page]'
+      - src: /work/nforce-ai/contact.webp
+        alt: Contact page
+        device: browser
+  - title: Mobile
+    body: The shape compositions reflow for small screens, and the headline still leads.
+    figures:
+      - src: /work/nforce-ai/home-mobile.webp
+        alt: nForce AI homepage on a phone
+        device: phone
+      - src: /work/nforce-ai/training-mobile.webp
+        alt: AI training page on a phone
+        device: phone
+
+walkthrough:
+  intro: The path most agency buyers take through the new site.
+  device: browser
+  steps:
+    - title: Land on the promise
+      caption: The homepage leads with what nForce does in one line, "Find the fraud hiding in public data", and backs it with a sourced statistic.
+      figure:
+        src: /work/nforce-ai/home.webp
+        alt: Homepage hero
+        device: browser
+    - title: See how detection works
+      caption: The anomaly detection page explains the three checks, rules, models and people, in order.
+      figure:
+        src: /work/nforce-ai/anomaly.webp
+        alt: Anomaly detection page
+        device: browser
+    - title: Watch a flag get explained
+      caption: The interactive example lets buyers pick a flagged payment and see the evidence behind it.
+      figure:
+        src: /work/nforce-ai/flag-explorer.webp
+        alt: Flag explorer
+        ratio: '1320 / 900'
+        device: browser
+    - title: Reach out
+      caption: A short contact form sends straight to the team's inbox and stores nothing, which matches the privacy policy.
+      figure:
+        src: /work/nforce-ai/contact.webp
+        alt: Contact page
         device: browser
 
 reflection:
   - title: What was hard
-    body: '[Say it plainly.]'
+    body: '[Be honest. For example: a direction that had to be thrown out, or writing for a government audience you were not part of.]'
   - title: What I'd do differently
     body: '[One concrete thing.]'
+  - title: What stuck with me
+    body: Writing the design system down first changed everything. When a value wasn't in DESIGN.md, it was a bug, and that made decisions fast.

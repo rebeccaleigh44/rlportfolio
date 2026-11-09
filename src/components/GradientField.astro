@@ -57,13 +57,15 @@ const vars = colors
   .field--soft .field__blobs { filter: blur(clamp(30px, 5vw, 80px)); }
 
   /* Footer: rolling bands, like painted hills seen through frosted glass */
-  .field--hills { background: transparent; }
+  /* A blue ground under the hills so the light page never shows through as grey */
+  .field--hills { background: linear-gradient(to bottom, transparent 38%, #7d90f4 62%, #2a3bc0 82%, #1b2585); }
+  .field--hills .grain { --grain: 0.4; }
   .field--hills .field__blobs { inset: 0 -10% -30%; filter: blur(clamp(18px, 2.4vw, 36px)); }
   .field--hills .blob { border-radius: 50% 50% 0 0 / 100% 100% 0 0; animation-duration: 40s; }
-  .field--hills .b1 { width: 70%; height: 46%; left: 18%; top: 40%; }
+  .field--hills .b1 { width: 70%; height: 50%; left: 16%; top: 38%; }
   .field--hills .b2 { width: 60%; height: 40%; left: 52%; top: 52%; }
   .field--hills .b3 { width: 64%; height: 38%; left: -10%; top: 58%; }
-  .field--hills .b4 { width: 90%; height: 26%; left: 0%; top: 76%; }
+  .field--hills .b4 { width: 120%; height: 30%; left: -10%; top: 74%; }
 
   @keyframes drift1 { to { transform: translate(-8%, 10%) scale(1.08); } }
   @keyframes drift2 { to { transform: translate(6%, 8%) scale(0.94); } }
