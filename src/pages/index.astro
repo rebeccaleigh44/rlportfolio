@@ -1,0 +1,219 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import GradientField from '../components/GradientField.astro';
+import { site } from '../site.config';
+
+const work = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const clients = ['Navy Federal Credit Union', 'Sentara', 'i3Verticals', 'Hivemindd', 'EdJit'];
+---
+<Base>
+  <section class="hero">
+    <div class="hero__panel">
+      <GradientField interactive />
+      <div class="hero__copy wrap">
+        <h1>I design software that feels human.</h1>
+        <p class="hero__sub">
+          Experiences that reflect the people behind them and invite others in. I'm Rebecca, a
+          {site.role} working mostly in banking, healthcare and AI.
+        </p>
+      </div>
+      <span class="hero__mark" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <section class="work wrap" id="work" aria-labelledby="work-title">
+    <h2 id="work-title" class="work__title">Selected work</h2>
+    <ol class="index" role="list">
+      {work.map((w) => (
+        <li>
+          <a
+            class="row"
+            href={`/work/${w.id}/`}
+            style={`--a:${w.data.palette[0]};--b:${w.data.palette[1]};--c:${w.data.palette[2]};--d:${w.data.palette[3]};`}
+          >
+            <span class="swatch" aria-hidden="true"></span>
+            <span class="row__client">{w.data.client}</span>
+            <span class="row__teaser">{w.data.teaser}</span>
+            <span class="row__meta">{w.data.sector}, {w.data.year}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="about wrap" id="about" aria-labelledby="about-title">
+    <h2 id="about-title" class="about__label">About</h2>
+    <div class="about__body">
+      <p class="about__lead">
+        I've spent my career on the screens people open when something matters: a mortgage payment,
+        a medical claim, a team trying to get work done. That's where good design stops being decoration
+        and starts being <span class="pill">kindness with a deadline</span>.
+      </p>
+      <p>
+        I do the whole arc. Research, flows, systems, the pixels, and the slightly awkward
+        conversation about what we can't ship this quarter. I'm happiest sitting next to engineers,
+        and I write my own copy. [Swap in a line about where you're based and what you're looking for.]
+      </p>
+      <div class="clients">
+        <h3>Teams I've worked with</h3>
+        <ul role="list">{clients.map((c) => <li>{c}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="peek" aria-hidden="true"><div class="grain"></div></div>
+</Base>
+
+<style>
+  /* Hero: an inset, rounded colour panel. The headline sits low and left,
+     like type laid over a photograph. */
+  .hero { padding: 5.25rem clamp(0.5rem, 1.4vw, 1.25rem) 0; }
+  .hero__panel {
+    position: relative;
+    isolation: isolate;
+    min-height: min(88svh, 60rem);
+    border-radius: clamp(20px, 2.4vw, 36px);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    color: var(--white);
+  }
+  .hero__panel :global(.field) { z-index: -1; }
+  .hero__copy { padding-bottom: clamp(2rem, 6vw, 5rem); }
+  h1 {
+    font-size: var(--t-hero);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    max-width: 11ch;
+    text-shadow: 0 2px 40px rgba(20, 24, 70, 0.18);
+  }
+  .hero__sub {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    font-size: var(--t-md);
+    line-height: 1.45;
+  }
+  /* The turned square, drifting a little below the type */
+  .hero__mark {
+    position: absolute;
+    right: clamp(1.5rem, 8vw, 9rem);
+    top: 38%;
+    width: clamp(28px, 4vw, 56px);
+    aspect-ratio: 1;
+    background: var(--white);
+    rotate: 45deg;
+    animation: bob 7s ease-in-out infinite alternate;
+  }
+  @keyframes bob { to { translate: 0 22px; rotate: 60deg; } }
+
+  /* Work index: a list, not cards. Each row carries its project colour. */
+  .work { padding-top: clamp(4rem, 10vw, 8rem); padding-bottom: clamp(4rem, 9vw, 7rem); }
+  .work__title { font-size: var(--t-xl); margin-bottom: 1.5rem; }
+  .index { list-style: none; padding: 0; border-top: 1px solid var(--hairline); }
+  .row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1.1fr) minmax(0, 1.4fr) 9rem;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.6rem 0.25rem;
+    border-bottom: 1px solid var(--hairline);
+    text-decoration: none;
+    transition: padding 0.5s var(--ease);
+  }
+  .swatch {
+    width: 2.25rem; aspect-ratio: 1; border-radius: 50%;
+    background:
+      radial-gradient(70% 70% at 30% 30%, var(--a), transparent 75%),
+      radial-gradient(60% 60% at 75% 70%, var(--b), transparent 75%),
+      var(--c);
+    transition: scale 0.5s var(--ease);
+  }
+  .row__client {
+    font-family: var(--serif);
+    font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+    font-weight: 560;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  .row__teaser { color: var(--ink-soft); max-width: 40ch; }
+  .row__meta { font-size: var(--t-sm); color: var(--ink-soft); white-space: nowrap; text-align: right; }
+  .row:hover, .row:focus-visible { padding-left: 1rem; }
+  .row:hover .swatch, .row:focus-visible .swatch { scale: 1.25; }
+  .row:hover .row__client { text-decoration: underline; text-decoration-thickness: 2px; }
+
+  @media (max-width: 860px) {
+    .row { grid-template-columns: 2rem 1fr; gap: 0.35rem 1rem; }
+    .swatch { width: 2rem; grid-row: span 3; align-self: start; margin-top: 0.4rem; }
+    .row__meta { grid-column: 2; text-align: left; }
+  }
+
+  /* Follow-the-cursor preview, coloured by whichever row is hovered */
+  .peek {
+    position: fixed; left: 0; top: 0; z-index: 30;
+    width: 15rem; aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 24px 24px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0; scale: 0.6;
+    translate: var(--x, -100px) var(--y, -100px);
+    transition: opacity 0.35s var(--ease), scale 0.5s var(--ease);
+    background:
+      radial-gradient(70% 60% at 35% 25%, var(--a, #2d4be0), transparent 72%),
+      radial-gradient(60% 60% at 80% 55%, var(--b, #f2715f), transparent 72%),
+      radial-gradient(70% 60% at 25% 95%, var(--c, #93e0d3), transparent 70%),
+      var(--d, #f9cda6);
+  }
+  .peek.on { opacity: 1; scale: 1; }
+  @media (hover: none) { .peek { display: none; } }
+
+  /* About: label on the left, words on the right */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem 4rem;
+    padding-bottom: clamp(5rem, 11vw, 9rem);
+  }
+  .about__label { font-size: var(--t-xl); }
+  .about__body { max-width: var(--measure); display: grid; gap: 1.25rem; }
+  .about__lead {
+    font-family: var(--serif);
+    font-size: var(--t-lg);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .clients { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline); }
+  .clients h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; letter-spacing: 0; margin-bottom: 0.75rem; }
+  .clients ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .clients li { padding: 0.3rem 0.85rem; border: 1px solid var(--hairline); border-radius: 999px; font-size: var(--t-sm); }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // The preview orb trails the cursor across the work list and takes on
+  // the colours of the row underneath it.
+  const peek = document.querySelector<HTMLElement>('.peek');
+  const rows = document.querySelectorAll<HTMLElement>('.row');
+  if (peek && matchMedia('(hover: hover)').matches) {
+    let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
+    const loop = () => {
+      cx += (x - cx) * 0.16; cy += (y - cy) * 0.16;
+      peek.style.setProperty('--x', `${cx + 28}px`);
+      peek.style.setProperty('--y', `${cy - 150}px`);
+      raf = requestAnimationFrame(loop);
+    };
+    rows.forEach((row) => {
+      row.addEventListener('pointerenter', (e) => {
+        ['--a', '--b', '--c', '--d'].forEach((v) => peek.style.setProperty(v, row.style.getPropertyValue(v)));
+        if (!raf) { cx = x = e.clientX; cy = y = e.clientY; raf = requestAnimationFrame(loop); }
+        peek.classList.add('on');
+      });
+      row.addEventListener('pointermove', (e) => { x = e.clientX; y = e.clientY; });
+      row.addEventListener('pointerleave', () => peek.classList.remove('on'));
+    });
+    document.querySelector('.index')?.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(raf); raf = 0;
+    });
+  }
+</script>

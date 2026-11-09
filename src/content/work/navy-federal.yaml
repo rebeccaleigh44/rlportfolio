@@ -1,0 +1,166 @@
+# ─────────────────────────────────────────────────────────────
+# Navy Federal Credit Union: Design System
+# Anything in [square brackets] is a placeholder for a real fact,
+# number or name. Swap it out, or delete the line.
+# Drop images in /public/work/navy-federal/ and set `src` on any figure.
+# ─────────────────────────────────────────────────────────────
+order: 1
+client: Navy Federal Credit Union
+title: One system for a bank that serves millions of members
+subtitle: The Navy Federal design system
+teaser: Rebuilding the component library a whole digital banking org designs from.
+year: '[2025]'
+sector: Banking
+palette: ['#2340c9', '#8fa9ff', '#93e0d3', '#dfe6f7']
+cover:
+  alt: Navy Federal design system components laid out across light and dark themes
+  ratio: '16 / 9'
+
+tldr:
+  - The old system had drifted. Teams were rebuilding the same button [six] different ways, and accessibility support depended on who built the screen.
+  - I [led / co-led] the audit, the token architecture and the core component set, then sat with engineering every week so nothing got lost in handoff.
+  - '[Headline result: e.g. adoption across X product teams, Y% fewer one-off components, WCAG 2.2 AA by default.]'
+
+overview: >-
+  Navy Federal is the largest credit union in the US, and its members do real money things in
+  its apps: pay a mortgage, move savings, dispute a charge. The design system underneath all of
+  that had grown by accretion. Think three generations of components living side by side, none
+  of them quite matching. So we rebuilt it.
+
+meta:
+  role: [Design systems, Accessibility, Interaction design, Documentation]
+  team: ['[Lead designer]', '[2 product designers]', '[Front-end engineering lead]', '[Accessibility specialist]']
+  duration: '[8 months]'
+  tools: [Figma, Storybook, Jira]
+
+problem:
+  question: How might we give every product team one trustworthy set of parts, so members get the same accessible experience no matter which screen they land on?
+  stats:
+    - value: '[140+]'
+      label: one-off components found in the audit
+    - value: '[38%]'
+      label: of audited screens failed a contrast check
+
+process:
+  - phase: Audit
+    detail: Screenshotted every live flow and sorted the parts by what they actually do, not what they were named.
+  - phase: Foundations
+    detail: Rebuilt color, type and spacing as tokens with light and dark themes baked in from day one.
+  - phase: Components
+    detail: Shipped the core set in order of how often teams reached for them.
+  - phase: Adoption
+    detail: Office hours, migration guides and a lot of pairing sessions.
+
+impact:
+  - value: '[X]'
+    label: product teams on the new system
+    detail: '[How you measured it]'
+  - value: '[X%]'
+    label: faster design to dev handoff
+  - value: AA
+    label: WCAG 2.2 contrast across every token pair
+  - value: '[X]'
+    label: duplicate components retired
+
+context:
+  heading: Why a design system matters this much at a bank
+  body: >-
+    When a transfer screen looks slightly different from the one a member used last week, it reads
+    as a warning sign. Consistency here isn't just polish. It's trust. [Add the org context: how many
+    teams, how many apps, who owned the old library.]
+
+challenges:
+  user: Members met different patterns for the same task depending on which team built the page, and anyone relying on a screen reader got a coin flip.
+  business: Every team was paying to design, build and QA its own version of the same parts, and accessibility fixes had to be made [dozens] of times over.
+
+stakes:
+  - title: Trust
+    body: Inconsistent money screens make people second-guess whether they're in the right place.
+  - title: Compliance
+    body: Accessibility gaps are a legal risk for a financial institution, not just a usability one.
+  - title: Speed
+    body: Teams spent sprint time rebuilding basics instead of solving member problems.
+  - title: Drift
+    body: Without a source of truth, every new feature added another variant.
+
+reframe:
+  hmw: How might we make the accessible choice the easiest choice for every team that builds at Navy Federal?
+  highlight: the easiest choice
+  userNeeds: [Predictable patterns across every flow, Full keyboard and screen reader support, Readable contrast in any theme]
+  businessNeeds: [Fewer duplicate components, Faster delivery, A defensible accessibility baseline]
+
+scope:
+  body: >-
+    We couldn't boil the ocean, unfortunately. With [product and engineering leads], I scoped an MVP of
+    foundations plus the [12] components that showed up in [80%] of audited screens. Everything else
+    went on a public roadmap so teams knew it was coming.
+  figure:
+    alt: Audit board grouping components by frequency of use
+    ratio: '16 / 8'
+
+ideation:
+  body: >-
+    Before drawing a single component I mapped how tokens would cascade from brand values down to
+    component states. Getting that tree right early meant dark mode and high contrast came almost for free later.
+  figures:
+    - alt: Token architecture sketch, from primitives to semantic tokens to component tokens
+    - alt: Mid-fidelity component sheet for buttons, inputs and alerts
+
+decisions:
+  - title: How strict should the system be?
+    question: Lock components down, or let teams compose their own?
+    options:
+      - label: Locked components
+        body: Fewer ways to get it wrong, but teams with real edge cases would have forked the library within a month.
+        figure: { alt: Locked component example with no configurable slots }
+      - label: Composable slots
+        chosen: true
+        body: Fixed outer shell with defined slots inside. Teams get flexibility where they actually need it, and the accessibility stays baked in.
+        figure: { alt: Component with labelled content slots }
+  - title: Where does documentation live?
+    question: In Figma, or next to the code?
+    options:
+      - label: Figma only
+        body: Designers would love it. Engineers would never open it.
+      - label: Storybook, linked from Figma
+        chosen: true
+        body: One source of truth, reachable from both sides of the handoff.
+
+iterations:
+  - title: Alerts were too loud
+    body: The first alert set used full color fills. In testing, people read every info alert as an error. We pulled color back to a border and icon, and saved fills for things that actually need attention.
+    before: { alt: Original alert with a solid red fill, ratio: '4 / 3' }
+    after: { alt: Revised alert with a tinted border and icon, ratio: '4 / 3' }
+
+hifi:
+  - title: Foundations
+    body: Color, type, spacing and elevation tokens, each with a light and dark value.
+    figures:
+      - alt: Color token sheet with contrast ratios
+      - alt: Type scale specimen
+  - title: Components in context
+    body: Every component documented with real Navy Federal content, never lorem ipsum.
+    figures:
+      - alt: Account summary built entirely from system components
+        ratio: '16 / 9'
+
+walkthrough:
+  intro: How a product designer at Navy Federal goes from blank file to shipped screen with the system.
+  device: browser
+  steps:
+    - title: Start from a template
+      caption: '[Describe the starter file]'
+    - title: Pull in components
+      caption: '[Describe the library panel]'
+    - title: Check the docs
+      caption: '[Describe the Storybook page]'
+    - title: Hand off
+      caption: '[Describe the dev handoff]'
+
+reflection:
+  - title: What was hard
+    body: '[Be honest here. Scope changes, a steep learning curve, a team change mid-project. Say what happened and what you did about it.]'
+  - title: What I'd do differently
+    body: '[One or two concrete things.]'
+  - title: What stuck with me
+    body: '[The lesson you carry into the next system.]'

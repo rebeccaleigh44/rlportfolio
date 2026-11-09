@@ -1,0 +1,69 @@
+# Nforce AI: marketing site
+# [Square brackets] = placeholder. Swap or delete.
+order: 4
+client: Nforce AI
+title: '[Headline: what the new site does for Nforce AI]'
+subtitle: The Nforce AI website
+teaser: '[One line on the site and who it was built for.]'
+year: '2026'
+sector: AI
+palette: ['#5b3df0', '#f2715f', '#b9a8f2', '#ece8fb']
+cover:
+  alt: Nforce AI homepage on desktop and mobile
+  ratio: '16 / 9'
+
+tldr:
+  - '[What Nforce AI needed from a website.]'
+  - '[What you designed and built.]'
+  - '[What changed after launch.]'
+
+overview: >-
+  [What Nforce AI does, who the site is for, and why the old one (or no site at all) wasn't cutting it.]
+
+meta:
+  role: [Web design, Visual design, Copy, '[Build]']
+  team: ['[Collaborator]']
+  duration: '[X weeks]'
+  tools: [Figma, '[Framework]', Vercel]
+
+problem:
+  question: '[How might we explain a complicated AI product to people who have ten seconds to decide if it is for them?]'
+
+process:
+  - phase: Positioning
+    detail: '[What you learned about the audience and message]'
+  - phase: Structure
+    detail: '[Sitemap and page priorities]'
+  - phase: Visual direction
+    detail: '[How the look came together]'
+  - phase: Build and launch
+    detail: '[How it shipped]'
+
+challenges:
+  user: '[What visitors struggled with]'
+  business: '[What the company needed the site to do]'
+
+decisions:
+  - title: '[Hero approach]'
+    question: '[Lead with the product, or the problem?]'
+    options:
+      - label: '[Product first]'
+        body: '[Why not]'
+      - label: '[Problem first]'
+        chosen: true
+        body: '[Why this one]'
+
+hifi:
+  - title: Key pages
+    body: '[Which pages and why they matter]'
+    figures:
+      - alt: '[Homepage]'
+        device: browser
+      - alt: '[Second key page]'
+        device: browser
+
+reflection:
+  - title: What was hard
+    body: '[Say it plainly.]'
+  - title: What I'd do differently
+    body: '[One concrete thing.]'

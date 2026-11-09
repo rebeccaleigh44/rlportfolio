@@ -1,0 +1,66 @@
+# Mountain Project
+# [Square brackets] = placeholder. Swap or delete.
+order: 5
+client: Mountain Project
+title: '[Headline: the climber problem you solved]'
+subtitle: '[The Mountain Project ____ experience]'
+teaser: '[One line on what you designed for climbers.]'
+year: '[2024]'
+sector: Outdoors
+palette: ['#2f6b4f', '#f29c5f', '#9cc9b4', '#f3e6d6']
+cover:
+  alt: '[Mountain Project screens on a phone at the crag]'
+  ratio: '16 / 9'
+
+tldr:
+  - '[The climber problem in one sentence.]'
+  - '[What you did.]'
+  - '[The result.]'
+
+overview: >-
+  [Mountain Project is a route database built by and for climbers. What part of it did you take on, and why?]
+
+meta:
+  role: ['[Role]', '[Role]']
+  team: ['[Collaborator]']
+  duration: '[X months]'
+  tools: [Figma]
+
+problem:
+  question: '[How might we help climbers ... ?]'
+  stats:
+    - value: '[X]'
+      label: '[What the number means]'
+
+process:
+  - phase: Research
+    detail: '[e.g. interviews at the gym and the crag]'
+  - phase: Synthesis
+    detail: '[What you found]'
+  - phase: Prototyping
+    detail: '[What you tested]'
+  - phase: Testing
+    detail: '[Who and how]'
+
+stakes:
+  - title: '[Stake]'
+    body: '[Why it matters]'
+  - title: '[Stake]'
+    body: '[Why it matters]'
+
+reframe:
+  hmw: '[How might we ...?]'
+
+walkthrough:
+  device: phone
+  steps:
+    - title: '[Screen 1]'
+      caption: '[What happens here]'
+    - title: '[Screen 2]'
+      caption: '[What happens here]'
+    - title: '[Screen 3]'
+      caption: '[What happens here]'
+
+reflection:
+  - title: What was hard
+    body: '[Say it plainly.]'

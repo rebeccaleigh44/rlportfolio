@@ -1,0 +1,89 @@
+---
+import Figure from './Figure.astro';
+interface Props { walkthrough: any; palette: string[]; }
+const { walkthrough, palette } = Astro.props;
+const device = walkthrough.device ?? 'phone';
+---
+<div class:list={['wt', `wt--${device}`]} data-wt>
+  <ol class="wt__steps">
+    {walkthrough.steps.map((s: any, i: number) => (
+      <li>
+        <button class="wt__step" aria-pressed={i === 0 ? 'true' : 'false'} data-i={i}>
+          <span class="n">{i + 1}</span>
+          <span class="t">{s.title}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+  <div class="wt__stage">
+    {walkthrough.steps.map((s: any, i: number) => (
+      <div class="wt__screen" hidden={i !== 0} aria-live="polite">
+        <Figure
+          figure={s.figure ?? { alt: s.title, device, ratio: device === 'browser' ? '16 / 10' : undefined }}
+          palette={palette}
+          seed={i}
+        />
+        <p class="wt__caption">{s.caption}</p>
+      </div>
+    ))}
+    <div class="wt__nav">
+      <button data-dir="-1" aria-label="Previous screen">Previous</button>
+      <span class="wt__count" aria-hidden="true"><span data-count>1</span> of {walkthrough.steps.length}</span>
+      <button data-dir="1" aria-label="Next screen">Next</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .wt { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr; gap: 2.5rem; align-items: start; margin-top: 1.5rem; }
+  .wt--browser { grid-template-columns: 1fr; }
+  .wt__steps { list-style: none; padding: 0; display: grid; gap: 0.25rem; }
+  .wt--browser .wt__steps { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .wt__step {
+    width: 100%; text-align: left; font: inherit; color: var(--ink-soft);
+    background: none; border: 0; cursor: pointer;
+    display: flex; gap: 0.85rem; align-items: baseline;
+    padding: 0.6rem 0.75rem; border-radius: 12px;
+    transition: background-color 0.25s, color 0.25s;
+  }
+  .wt--browser .wt__step { border: 1.5px solid var(--hairline); border-radius: 999px; padding: 0.45rem 1rem; }
+  .wt__step:hover { color: var(--ink); }
+  .wt__step[aria-pressed='true'] { background: var(--white); color: var(--ink); }
+  .wt--browser .wt__step[aria-pressed='true'] { border-color: var(--ink); }
+  .n { font-family: var(--serif); font-weight: 600; font-variant-numeric: lining-nums; min-width: 1.2em; }
+  .wt__screen { animation: in 0.5s var(--ease); }
+  .wt__caption { margin-top: 1rem; max-width: var(--measure); }
+  .wt--phone .wt__caption { text-align: center; margin-inline: auto; max-width: 30ch; }
+  .wt__nav { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+  .wt__nav button {
+    font: inherit; font-size: 1rem; color: var(--ink); background: none; cursor: pointer;
+    border: 1.5px solid var(--ink); border-radius: 999px; padding: 0.4rem 1rem;
+  }
+  .wt__nav button:hover { background: var(--ink); color: var(--mist); }
+  .wt__count { font-size: var(--t-sm); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  @keyframes in { from { opacity: 0; translate: 12px 0; } }
+  @media (max-width: 760px) { .wt { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wt]').forEach((el) => {
+    const steps = [...el.querySelectorAll<HTMLButtonElement>('.wt__step')];
+    const screens = [...el.querySelectorAll<HTMLElement>('.wt__screen')];
+    const count = el.querySelector('[data-count]')!;
+    let cur = 0;
+    const go = (i: number) => {
+      cur = (i + screens.length) % screens.length;
+      steps.forEach((s, j) => s.setAttribute('aria-pressed', String(j === cur)));
+      screens.forEach((s, j) => (s.hidden = j !== cur));
+      count.textContent = String(cur + 1);
+    };
+    steps.forEach((s, i) => s.addEventListener('click', () => go(i)));
+    el.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach((b) =>
+      b.addEventListener('click', () => go(cur + Number(b.dataset.dir))),
+    );
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(cur + 1);
+      if (e.key === 'ArrowLeft') go(cur - 1);
+    });
+  });
+</script>

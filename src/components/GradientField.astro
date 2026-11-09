@@ -1,0 +1,107 @@
+---
+/**
+ * Grainy, blurred colour field. Blobs drift slowly and lean toward the
+ * pointer when `interactive` is set. Colours come from props or fall back
+ * to the --f1..--f4 custom properties.
+ */
+interface Props {
+  colors?: string[];
+  interactive?: boolean;
+  variant?: 'hero' | 'soft' | 'hills';
+  class?: string;
+}
+const { colors, interactive = false, variant = 'hero', class: cls = '' } = Astro.props;
+const vars = colors
+  ? colors.map((c, i) => `--f${i + 1}:${c}`).join(';')
+  : '';
+---
+<div
+  class:list={['field', `field--${variant}`, cls]}
+  style={vars}
+  data-field={interactive ? 'interactive' : 'static'}
+  aria-hidden="true"
+>
+  <div class="field__blobs">
+    <span class="blob b1" data-depth="0.9"></span>
+    <span class="blob b2" data-depth="-0.6"></span>
+    <span class="blob b3" data-depth="0.5"></span>
+    <span class="blob b4" data-depth="-0.35"></span>
+  </div>
+  <div class="grain"></div>
+</div>
+
+<style>
+  .field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--f4);
+    transition: background-color 1.2s var(--ease);
+  }
+  .field__blobs { position: absolute; inset: -20%; filter: blur(clamp(40px, 7vw, 110px)); }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    translate: var(--px, 0px) var(--py, 0px);
+    transition: background-color 1.2s var(--ease);
+    will-change: translate;
+  }
+  .b1 { background: var(--f1); width: 62%; height: 78%; left: 26%; top: -6%; animation: drift1 26s ease-in-out infinite alternate; }
+  .b2 { background: var(--f2); width: 52%; height: 70%; left: 62%; top: -12%; animation: drift2 31s ease-in-out infinite alternate; }
+  .b3 { background: var(--f3); width: 48%; height: 62%; left: -8%; top: 34%; animation: drift3 23s ease-in-out infinite alternate; }
+  .b4 { background: var(--f4); width: 42%; height: 50%; left: 70%; top: 58%; animation: drift2 28s ease-in-out infinite alternate-reverse; }
+
+  /* A quieter wash for case study covers and figures */
+  .field--soft .b1 { width: 50%; height: 64%; left: 34%; top: 6%; }
+  .field--soft .field__blobs { filter: blur(clamp(30px, 5vw, 80px)); }
+
+  /* Footer: rolling bands, like painted hills seen through frosted glass */
+  .field--hills { background: transparent; }
+  .field--hills .field__blobs { inset: 0 -10% -30%; filter: blur(clamp(18px, 2.4vw, 36px)); }
+  .field--hills .blob { border-radius: 50% 50% 0 0 / 100% 100% 0 0; animation-duration: 40s; }
+  .field--hills .b1 { width: 70%; height: 46%; left: 18%; top: 40%; }
+  .field--hills .b2 { width: 60%; height: 40%; left: 52%; top: 52%; }
+  .field--hills .b3 { width: 64%; height: 38%; left: -10%; top: 58%; }
+  .field--hills .b4 { width: 90%; height: 26%; left: 0%; top: 76%; }
+
+  @keyframes drift1 { to { transform: translate(-8%, 10%) scale(1.08); } }
+  @keyframes drift2 { to { transform: translate(6%, 8%) scale(0.94); } }
+  @keyframes drift3 { to { transform: translate(10%, -6%) scale(1.1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob { animation: none; }
+  }
+</style>
+
+<script>
+  // Pointer lean. One rAF loop per interactive field, eased so it feels like liquid.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    document.querySelectorAll<HTMLElement>('[data-field="interactive"]').forEach((field) => {
+      const host = field.parentElement!;
+      const blobs = [...field.querySelectorAll<HTMLElement>('.blob')];
+      let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+      const tick = () => {
+        cx += (tx - cx) * 0.06;
+        cy += (ty - cy) * 0.06;
+        blobs.forEach((b) => {
+          const d = parseFloat(b.dataset.depth || '0');
+          b.style.setProperty('--px', `${cx * d}px`);
+          b.style.setProperty('--py', `${cy * d}px`);
+        });
+        raf = Math.abs(tx - cx) + Math.abs(ty - cy) > 0.3 ? requestAnimationFrame(tick) : 0;
+      };
+      host.addEventListener('pointermove', (e) => {
+        const r = host.getBoundingClientRect();
+        tx = ((e.clientX - r.left) / r.width - 0.5) * 160;
+        ty = ((e.clientY - r.top) / r.height - 0.5) * 120;
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+      host.addEventListener('pointerleave', () => {
+        tx = 0; ty = 0;
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+    });
+  }
+</script>

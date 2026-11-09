@@ -1,0 +1,30 @@
+---
+// Name set in the display serif with a turned-square full stop,
+// borrowed from the diamond in the "m." reference mark.
+const { size = 'sm' } = Astro.props as { size?: 'sm' | 'lg' };
+---
+<span class:list={['wordmark', `wordmark--${size}`]}>
+  rebecca leigh<span class="diamond" aria-hidden="true"></span>
+</span>
+
+<style>
+  .wordmark {
+    font-family: var(--serif);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.14em;
+  }
+  .wordmark--sm { font-size: 1.5rem; }
+  .wordmark--lg { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+  .diamond {
+    width: 0.24em; height: 0.24em;
+    background: currentColor;
+    rotate: 45deg;
+    translate: 0 -0.02em;
+    transition: rotate 0.6s var(--ease);
+  }
+  a:hover .diamond, a:focus-visible .diamond { rotate: 225deg; }
+</style>

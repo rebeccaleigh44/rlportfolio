@@ -1,0 +1,90 @@
+---
+/**
+ * Image slot. With `src`, shows the image. Without it, draws a grainy
+ * gradient in the project's palette and prints the alt text faintly, so you
+ * can see at a glance which image belongs where.
+ */
+interface Props {
+  figure: {
+    src?: string;
+    alt: string;
+    caption?: string;
+    ratio?: string;
+    device?: 'none' | 'phone' | 'browser';
+  };
+  palette?: string[];
+  seed?: number;
+  eager?: boolean;
+}
+const { figure, palette = ['#2d4be0', '#f2715f', '#93e0d3', '#f9cda6'], seed = 0, eager = false } = Astro.props;
+const device = figure.device ?? 'none';
+const ratio = device === 'phone' ? '9 / 19' : figure.ratio ?? '16 / 10';
+// Rotate which colour leads so neighbouring placeholders don't look identical.
+const p = [...palette.slice(seed % 4), ...palette.slice(0, seed % 4)];
+const angle = (seed * 47) % 360;
+---
+<figure class:list={['fig', `fig--${device}`]}>
+  <div class="frame">
+    {device === 'browser' && (
+      <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
+    )}
+    <div class="media" style={`aspect-ratio:${ratio};`}>
+      {figure.src ? (
+        <img src={figure.src} alt={figure.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      ) : (
+        <div
+          class="ph"
+          role="img"
+          aria-label={`Placeholder: ${figure.alt}`}
+          style={`--a:${p[0]};--b:${p[1]};--c:${p[2]};--d:${p[3]};--ang:${angle}deg;`}
+        >
+          <div class="grain"></div>
+          <span class="ph__label">{figure.alt}</span>
+        </div>
+      )}
+    </div>
+  </div>
+  {figure.caption && <figcaption>{figure.caption}</figcaption>}
+</figure>
+
+<style>
+  .fig { margin: 0; }
+  .frame { position: relative; border-radius: 18px; overflow: hidden; background: var(--white); }
+  .media { position: relative; width: 100%; overflow: hidden; }
+  .media img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ph {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(60% 70% at 30% 25%, var(--a) 0%, transparent 70%),
+      radial-gradient(55% 65% at 80% 30%, var(--b) 0%, transparent 72%),
+      radial-gradient(60% 60% at 20% 90%, var(--c) 0%, transparent 70%),
+      var(--d);
+    filter: saturate(1.05);
+  }
+  .ph .grain { opacity: 0.5; }
+  .ph__label {
+    position: absolute; left: 0.85rem; bottom: 0.85rem;
+    font-size: 0.8125rem; line-height: 1.35;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.78);
+    padding: 0.3rem 0.7rem;
+    border-radius: 10px;
+    max-width: min(34ch, calc(100% - 1.7rem));
+  }
+
+  .fig--browser .frame { box-shadow: 0 1px 0 var(--hairline), 0 30px 60px -40px rgba(35, 40, 106, 0.45); }
+  .chrome { display: flex; gap: 6px; padding: 10px 12px; background: var(--white); border-bottom: 1px solid var(--hairline); }
+  .chrome i { width: 9px; height: 9px; border-radius: 50%; background: var(--mist-deep); }
+
+  .fig--phone .frame {
+    border-radius: 34px;
+    padding: 8px;
+    background: var(--ink);
+    max-width: 300px;
+    margin-inline: auto;
+  }
+  .fig--phone .media { border-radius: 27px; }
+
+  figcaption { margin-top: 0.75rem; font-size: var(--t-sm); color: var(--ink-soft); max-width: var(--measure); }
+</style>

@@ -1,0 +1,82 @@
+---
+import Figure from './Figure.astro';
+interface Props { decision: any; index: number; palette: string[]; }
+const { decision, index, palette } = Astro.props;
+const chosenIdx = Math.max(0, decision.options.findIndex((o: any) => o.chosen));
+const id = `dec-${index}`;
+---
+<div class="decision" data-decision>
+  <h3>{decision.title}</h3>
+  <p class="q">{decision.question}</p>
+  <div class="tabs" role="tablist" aria-label={decision.title}>
+    {decision.options.map((o: any, i: number) => (
+      <button
+        role="tab"
+        id={`${id}-tab-${i}`}
+        aria-controls={`${id}-panel-${i}`}
+        aria-selected={i === chosenIdx ? 'true' : 'false'}
+        tabindex={i === chosenIdx ? 0 : -1}
+        class:list={['tab', { chosen: o.chosen }]}
+      >
+        {o.label}
+        <span class="verdict">{o.chosen ? 'Went with this' : 'Ruled out'}</span>
+      </button>
+    ))}
+  </div>
+  {decision.options.map((o: any, i: number) => (
+    <div
+      role="tabpanel"
+      id={`${id}-panel-${i}`}
+      aria-labelledby={`${id}-tab-${i}`}
+      class="panel"
+      hidden={i !== chosenIdx}
+    >
+      <p>{o.body}</p>
+      {o.figure && <Figure figure={o.figure} palette={palette} seed={index * 3 + i} />}
+    </div>
+  ))}
+</div>
+
+<style>
+  .decision { padding-block: 2rem; border-top: 1px solid var(--hairline); }
+  h3 { font-size: var(--t-lg); }
+  .q { color: var(--ink-soft); margin-top: 0.35rem; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 1.25rem; }
+  .tab {
+    font: inherit; font-size: 1rem; font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.5rem 1.05rem 0.55rem;
+    cursor: pointer;
+    display: inline-flex; align-items: baseline; gap: 0.6rem;
+    transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+  }
+  .tab:hover { border-color: var(--ink); }
+  .tab[aria-selected='true'] { background: var(--ink); border-color: var(--ink); color: var(--mist); }
+  .verdict { font-size: 0.8125rem; font-weight: 400; opacity: 0.7; }
+  .panel { display: grid; gap: 1.25rem; animation: in 0.45s var(--ease); }
+  .panel p { max-width: var(--measure); }
+  @keyframes in { from { opacity: 0; translate: 0 6px; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-decision]').forEach((el) => {
+    const tabs = [...el.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...el.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const select = (i: number) => {
+      tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(i === j)); t.tabIndex = i === j ? 0 : -1; });
+      panels.forEach((p, j) => (p.hidden = i !== j));
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(i));
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        const n = (i + d + tabs.length) % tabs.length;
+        select(n); tabs[n].focus();
+      });
+    });
+  });
+</script>

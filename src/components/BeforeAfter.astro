@@ -1,0 +1,61 @@
+---
+import Figure from './Figure.astro';
+interface Props { item: any; palette: string[]; index: number; }
+const { item, palette, index } = Astro.props;
+const muted = ['#c9ced6', '#aab1bf', '#dfe3e8', '#eef0f3']; // "before" reads greyer on purpose
+---
+<div class="ba-block">
+  <h3>{item.title}</h3>
+  <p>{item.body}</p>
+  <div class="ba" data-ba style="--pos:50%">
+    <div class="ba__layer ba__after"><Figure figure={item.after} palette={palette} seed={index + 1} /></div>
+    <div class="ba__layer ba__before"><Figure figure={item.before} palette={muted} seed={index} /></div>
+    <span class="ba__tag ba__tag--l">Before</span>
+    <span class="ba__tag ba__tag--r">After</span>
+    <span class="ba__handle" aria-hidden="true"></span>
+    <input
+      type="range" min="0" max="100" value="50"
+      aria-label={`Compare before and after: ${item.title}`}
+    />
+  </div>
+</div>
+
+<style>
+  .ba-block { display: grid; gap: 0.75rem; padding-block: 2rem; border-top: 1px solid var(--hairline); }
+  h3 { font-size: var(--t-lg); }
+  .ba-block > p { max-width: var(--measure); }
+  .ba { position: relative; margin-top: 0.75rem; border-radius: 18px; overflow: hidden; }
+  .ba__layer :global(.fig) { margin: 0; }
+  .ba__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .ba__handle {
+    position: absolute; top: 0; bottom: 0; left: var(--pos);
+    width: 2px; background: var(--white); translate: -1px 0;
+    box-shadow: 0 0 0 1px rgba(35, 40, 106, 0.15);
+  }
+  .ba__handle::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 22px; height: 22px; background: var(--white); rotate: 45deg;
+    translate: -50% -50%; border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(35, 40, 106, 0.3);
+  }
+  .ba__tag {
+    position: absolute; top: 0.85rem; z-index: 2;
+    font-size: 0.8125rem; font-weight: 600;
+    padding: 0.2rem 0.65rem; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85); color: var(--ink);
+  }
+  .ba__tag--l { left: 0.85rem; }
+  .ba__tag--r { right: 0.85rem; }
+  input {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: ew-resize; margin: 0;
+  }
+  input:focus-visible + * , .ba:has(input:focus-visible) { outline: 2px solid var(--cobalt); outline-offset: 4px; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((el) => {
+    const input = el.querySelector('input')!;
+    input.addEventListener('input', () => el.style.setProperty('--pos', `${input.value}%`));
+  });
+</script>

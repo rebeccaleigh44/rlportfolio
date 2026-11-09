@@ -1,0 +1,491 @@
+---
+/*
+  Case study template. Section order follows the Rocket Account Merge study:
+  hero, quick read, overview, problem, process, impact, context, challenges,
+  stakes, reframe, scope, ideation and decisions, iterations, high fidelity,
+  final walkthrough, then a reflection and links to more work.
+  Each section renders only if its field exists in the YAML.
+*/
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import GradientField from '../../components/GradientField.astro';
+import Figure from '../../components/Figure.astro';
+import Decision from '../../components/Decision.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import Walkthrough from '../../components/Walkthrough.astro';
+
+export async function getStaticPaths() {
+  const work = (await getCollection('work', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+  return work.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, more: [work[(i + 1) % work.length], work[(i + 2) % work.length]] },
+  }));
+}
+
+const { entry, more } = Astro.props;
+const d = entry.data;
+const pal = d.palette;
+
+// Table of contents, built from whichever sections exist.
+// `deep` sections hide in quick-read mode.
+const toc = [
+  { id: 'overview', label: 'Overview', show: true, deep: false },
+  { id: 'problem', label: 'The problem', show: !!d.problem, deep: true },
+  { id: 'process', label: 'Process', show: !!d.process, deep: true },
+  { id: 'impact', label: 'Impact', show: !!d.impact, deep: false },
+  { id: 'context', label: 'Context', show: !!(d.context || d.challenges || d.stakes), deep: true },
+  { id: 'reframe', label: 'Reframing', show: !!(d.reframe || d.scope), deep: true },
+  { id: 'ideation', label: 'Ideas and decisions', show: !!(d.ideation || d.decisions), deep: true },
+  { id: 'iterations', label: 'Iterations', show: !!d.iterations, deep: true },
+  { id: 'hifi', label: 'High fidelity', show: !!d.hifi, deep: true },
+  { id: 'final', label: 'Final designs', show: !!d.walkthrough, deep: false },
+  { id: 'reflection', label: 'Reflection', show: !!d.reflection, deep: false },
+].filter((t) => t.show);
+
+const hmwParts = d.reframe?.highlight && d.reframe.hmw.includes(d.reframe.highlight)
+  ? d.reframe.hmw.split(d.reframe.highlight)
+  : null;
+---
+<Base title={`${d.client}: ${d.subtitle}`} description={d.teaser}>
+  <article class="cs" data-mode="full" style={`--p1:${pal[0]};--p2:${pal[1]};--p3:${pal[2]};--p4:${pal[3]};`}>
+
+    <!-- 1. Hero -->
+    <header class="cs-hero">
+      <div class="cs-hero__panel">
+        <GradientField colors={pal} interactive variant="soft" />
+        <div class="wrap cs-hero__inner">
+          <p class="cs-hero__client">{d.client}</p>
+          <h1>{d.title}</h1>
+          <p class="cs-hero__sub">{d.subtitle}</p>
+        </div>
+      </div>
+      <div class="wrap cs-hero__bar">
+        <div class="mode" role="group" aria-label="Reading length">
+          <button aria-pressed="true" data-mode-btn="full">Full story</button>
+          <button aria-pressed="false" data-mode-btn="quick">Quick read</button>
+        </div>
+        <p class="mode__hint" aria-live="polite" data-mode-hint>About a ten minute read.</p>
+      </div>
+      <div class="wrap cs-cover">
+        <Figure figure={d.cover} palette={pal} eager />
+      </div>
+    </header>
+
+    <div class="wrap cs-body">
+      <!-- Sticky rail: progress + contents -->
+      <aside class="rail" aria-label="On this page">
+        <div class="rail__inner">
+          <span class="rail__bar" aria-hidden="true"><span data-progress></span></span>
+          <ol>
+            {toc.map((t) => (
+              <li class:list={{ deep: t.deep }}><a href={`#${t.id}`} data-toc={t.id}>{t.label}</a></li>
+            ))}
+          </ol>
+        </div>
+      </aside>
+
+      <div class="flow">
+        <!-- 2. Quick read -->
+        <section class="tldr" aria-labelledby="tldr-h">
+          <h2 id="tldr-h" class="overline">Quick read</h2>
+          <ul role="list">{d.tldr.map((t) => <li>{t}</li>)}</ul>
+        </section>
+
+        <!-- 3. Overview + metadata -->
+        <section id="overview" class="sec">
+          <h2>Overview</h2>
+          <p class="lede">{d.overview}</p>
+          <dl class="meta">
+            <div><dt class="overline">My role</dt><dd>{d.meta.role.join(', ')}</dd></div>
+            <div><dt class="overline">Team</dt><dd>{d.meta.team.join(', ')}</dd></div>
+            <div><dt class="overline">Duration</dt><dd>{d.meta.duration}</dd></div>
+            {d.meta.tools.length > 0 && <div><dt class="overline">Tools</dt><dd>{d.meta.tools.join(', ')}</dd></div>}
+          </dl>
+        </section>
+
+        <!-- 4. Problem -->
+        {d.problem && (
+          <section id="problem" class="sec deep">
+            <h2>The problem</h2>
+            <p class="question">{d.problem.question}</p>
+            {d.problem.stats.length > 0 && (
+              <dl class="stats">
+                {d.problem.stats.map((s) => (
+                  <div><dt>{s.label}</dt><dd>{s.value}</dd></div>
+                ))}
+              </dl>
+            )}
+          </section>
+        )}
+
+        <!-- 5. Process: a real sequence, so it is numbered -->
+        {d.process && (
+          <section id="process" class="sec deep">
+            <h2>How it came together</h2>
+            <ol class="process">
+              {d.process.map((p) => (
+                <li><h3>{p.phase}</h3><p>{p.detail}</p></li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        <!-- 6. Impact -->
+        {d.impact && (
+          <section id="impact" class="sec impact">
+            <div class="impact__field"><GradientField colors={pal} variant="soft" /></div>
+            <h2>What changed</h2>
+            <dl class="impact__grid">
+              {d.impact.map((s) => (
+                <div>
+                  <dd class="impact__value">{s.value}</dd>
+                  <dt>{s.label}</dt>
+                  {s.detail && <dd class="impact__detail">{s.detail}</dd>}
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        <!-- 7 to 9. Context, two-sided challenge, stakes -->
+        {(d.context || d.challenges || d.stakes) && (
+          <section id="context" class="sec deep">
+            <h2>{d.context?.heading ?? 'Why it mattered'}</h2>
+            {d.context && <p class="prose">{d.context.body}</p>}
+            {d.context?.figure && <Figure figure={d.context.figure} palette={pal} seed={1} />}
+            {d.challenges && (
+              <div class="split">
+                <div><h3>For people using it</h3><p>{d.challenges.user}</p></div>
+                <div><h3>For the business</h3><p>{d.challenges.business}</p></div>
+              </div>
+            )}
+            {d.stakes && (
+              <>
+                <h3 class="sub">What was at stake</h3>
+                <ul class="stakes" role="list">
+                  {d.stakes.map((s) => <li><h4>{s.title}</h4><p>{s.body}</p></li>)}
+                </ul>
+              </>
+            )}
+          </section>
+        )}
+
+        <!-- 10 to 11. Reframe + scope -->
+        {(d.reframe || d.scope) && (
+          <section id="reframe" class="sec deep">
+            <h2>Reframing the problem</h2>
+            {d.reframe && (
+              <>
+                <p class="hmw">
+                  {hmwParts ? (
+                    <>{hmwParts[0]}<span class="pill">{d.reframe.highlight}</span>{hmwParts[1]}</>
+                  ) : d.reframe.hmw}
+                </p>
+                {(d.reframe.userNeeds.length > 0 || d.reframe.businessNeeds.length > 0) && (
+                  <div class="split">
+                    <div><h3>People need</h3><ul>{d.reframe.userNeeds.map((n) => <li>{n}</li>)}</ul></div>
+                    <div><h3>The business needs</h3><ul>{d.reframe.businessNeeds.map((n) => <li>{n}</li>)}</ul></div>
+                  </div>
+                )}
+              </>
+            )}
+            {d.scope && (
+              <>
+                <h3 class="sub">Setting the scope</h3>
+                <p class="prose">{d.scope.body}</p>
+                {d.scope.figure && <Figure figure={d.scope.figure} palette={pal} seed={2} />}
+              </>
+            )}
+          </section>
+        )}
+
+        <!-- 12. Ideation + decisions -->
+        {(d.ideation || d.decisions) && (
+          <section id="ideation" class="sec deep">
+            <h2>Ideas and decisions</h2>
+            {d.ideation && (
+              <>
+                <p class="prose">{d.ideation.body}</p>
+                {d.ideation.figures.length > 0 && (
+                  <div class="gallery">
+                    {d.ideation.figures.map((f, i) => <Figure figure={f} palette={pal} seed={i + 3} />)}
+                  </div>
+                )}
+              </>
+            )}
+            {d.decisions?.map((dec, i) => <Decision decision={dec} index={i} palette={pal} />)}
+          </section>
+        )}
+
+        <!-- 13. Constraints + iterations -->
+        {d.iterations && (
+          <section id="iterations" class="sec deep">
+            <h2>Constraints and iterations</h2>
+            {d.iterations.map((it, i) => <BeforeAfter item={it} palette={pal} index={i} />)}
+          </section>
+        )}
+
+        <!-- 14. High fidelity -->
+        {d.hifi && (
+          <section id="hifi" class="sec deep">
+            <h2>High fidelity</h2>
+            {d.hifi.map((h, i) => (
+              <div class="hifi">
+                <h3>{h.title}</h3>
+                <p>{h.body}</p>
+                <div class:list={['gallery', { single: h.figures.length === 1 }]}>
+                  {h.figures.map((f, j) => <Figure figure={f} palette={pal} seed={i * 2 + j} />)}
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        <!-- 15. Final designs -->
+        {d.walkthrough && (
+          <section id="final" class="sec">
+            <h2>Final designs</h2>
+            {d.walkthrough.intro && <p class="prose">{d.walkthrough.intro}</p>}
+            <Walkthrough walkthrough={d.walkthrough} palette={pal} />
+          </section>
+        )}
+
+        <!-- 16. Reflection -->
+        {d.reflection && (
+          <section id="reflection" class="sec">
+            <h2>Looking back</h2>
+            <div class="reflect">
+              {d.reflection.map((r) => <div><h3>{r.title}</h3><p>{r.body}</p></div>)}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+
+    <!-- Closing: more work -->
+    <nav class="wrap more" aria-labelledby="more-h">
+      <h2 id="more-h">Thanks for reading. Here's more.</h2>
+      <div class="more__grid">
+        {more.map((m) => (
+          <a class="more__card" href={`/work/${m.id}/`}>
+            <div class="more__swatch"><GradientField colors={m.data.palette} variant="soft" /></div>
+            <span class="more__client">{m.data.client}</span>
+            <span class="more__teaser">{m.data.teaser}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  /* ── Hero ─────────────────────────────── */
+  .cs-hero { padding: 5.25rem clamp(0.5rem, 1.4vw, 1.25rem) 0; }
+  .cs-hero__panel {
+    position: relative; isolation: isolate; overflow: hidden;
+    min-height: min(70svh, 44rem);
+    border-radius: clamp(20px, 2.4vw, 36px);
+    display: flex; align-items: flex-end;
+    color: var(--white);
+    padding-bottom: clamp(9rem, 18vw, 15rem); /* room for the overlapping cover */
+  }
+  .cs-hero__panel :global(.field) { z-index: -1; }
+  .cs-hero__inner { padding-top: 6rem; }
+  .cs-hero__client { font-weight: 600; font-size: 1rem; }
+  h1 {
+    font-size: var(--t-2xl);
+    font-weight: 600;
+    max-width: 16ch;
+    margin-top: 0.75rem;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 40px rgba(20, 24, 70, 0.2);
+  }
+  .cs-hero__sub { font-family: var(--serif); font-style: italic; font-size: var(--t-md); margin-top: 0.85rem; }
+
+  .cs-hero__bar {
+    position: relative; z-index: 2;
+    margin-top: calc(-1 * clamp(8rem, 16vw, 13.5rem));
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .mode {
+    display: inline-flex; padding: 4px; gap: 2px;
+    background: rgba(35, 40, 106, 0.28);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+  }
+  .mode button {
+    font: inherit; font-size: 0.9375rem; font-weight: 500; cursor: pointer;
+    color: var(--white); background: transparent; border: 0;
+    padding: 0.45rem 1rem; border-radius: 999px;
+    transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .mode button[aria-pressed='true'] { background: var(--white); color: var(--ink); }
+  .mode__hint { color: var(--white); font-size: var(--t-sm); }
+  .cs-cover { position: relative; z-index: 1; margin-top: 1.5rem; }
+  .cs-cover :global(.frame) { box-shadow: 0 40px 80px -50px rgba(35, 40, 106, 0.55); }
+
+  /* ── Body grid with sticky rail ───────── */
+  .cs-body {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-top: clamp(3rem, 7vw, 6rem);
+  }
+  .rail__inner { position: sticky; top: 6.5rem; display: flex; gap: 1rem; }
+  .rail__bar { width: 2px; background: var(--hairline); border-radius: 2px; position: relative; flex: none; }
+  .rail__bar span {
+    position: absolute; inset: 0 0 auto; height: 0;
+    background: linear-gradient(var(--p1), var(--p2));
+    border-radius: 2px;
+  }
+  .rail ol { list-style: none; padding: 0; display: grid; gap: 0.15rem; }
+  .rail a {
+    display: block; padding: 0.3rem 0; text-decoration: none;
+    font-size: 0.9375rem; color: var(--ink-soft);
+    transition: color 0.2s, translate 0.3s var(--ease);
+  }
+  .rail a:hover { color: var(--ink); }
+  .rail a.active { color: var(--ink); font-weight: 600; translate: 4px 0; }
+  @media (max-width: 960px) {
+    .cs-body { grid-template-columns: 1fr; }
+    .rail { display: none; }
+  }
+
+  .flow { min-width: 0; max-width: 52rem; }
+
+  /* Quick read mode hides the deep sections */
+  .cs[data-mode='quick'] .deep { display: none; }
+
+  /* ── Sections ─────────────────────────── */
+  .sec { padding-block: clamp(3rem, 6vw, 5rem); border-top: 1px solid var(--hairline); display: grid; gap: 1.5rem; }
+  .sec > h2 { font-size: var(--t-xl); }
+  .sec h3 { font-size: var(--t-md); font-weight: 600; }
+  .sub { margin-top: 1.5rem; }
+  .prose, .lede { max-width: var(--measure); }
+  .lede { font-family: var(--serif); font-size: var(--t-md); line-height: 1.5; }
+
+  .tldr {
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    border-radius: 24px;
+    background: var(--white);
+  }
+  .tldr ul { margin-top: 1rem; padding-left: 1.1rem; display: grid; gap: 0.75rem; max-width: 44rem; }
+  .tldr li::marker { color: var(--p1); }
+
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline); }
+  .meta dd { margin: 0.4rem 0 0; }
+
+  .question, .hmw {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    max-width: 28ch;
+  }
+  .hmw .pill { border-color: var(--p1); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 2.5rem; }
+  .stats { align-items: flex-start; }
+  .stats div { display: flex; flex-direction: column; }
+  .stats dd { order: -1; }
+  .stats dd { margin: 0; font-family: var(--serif); font-size: var(--t-2xl); font-weight: 600; line-height: 1; letter-spacing: -0.03em; color: var(--p1); }
+  .stats dt { color: var(--ink-soft); max-width: 18ch; margin-top: 0.4rem; }
+
+  .process { list-style: none; padding: 0; counter-reset: step; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.5rem; }
+  .process li { counter-increment: step; padding-top: 1rem; border-top: 2px solid var(--ink); }
+  .process li::before { content: counter(step); font-family: var(--serif); font-weight: 600; font-size: var(--t-lg); line-height: 1; }
+  .process h3 { margin-top: 0.75rem; }
+  .process p { color: var(--ink-soft); margin-top: 0.35rem; font-size: 1rem; }
+
+  .impact {
+    position: relative; isolation: isolate; overflow: hidden;
+    border-top: 0;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    border-radius: 28px;
+    color: var(--white);
+    margin-block: 1rem;
+  }
+  .impact__field { position: absolute; inset: 0; z-index: -1; }
+  .impact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 2rem; }
+  .impact__grid dd { margin: 0; }
+  .impact__value { font-family: var(--serif); font-size: var(--t-2xl); font-weight: 600; line-height: 1; letter-spacing: -0.03em; }
+  .impact__grid dt { margin-top: 0.5rem; font-weight: 500; }
+  .impact__detail { font-size: var(--t-sm); opacity: 0.85; margin-top: 0.25rem !important; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hairline); border-radius: 20px; overflow: hidden; }
+  .split > div { background: rgba(255, 255, 255, 0.55); padding: 1.5rem; display: grid; gap: 0.6rem; align-content: start; }
+  .split ul { padding-left: 1.1rem; display: grid; gap: 0.35rem; }
+  @media (max-width: 640px) { .split { grid-template-columns: 1fr; } }
+
+  .stakes { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1.5rem 2rem; }
+  .stakes h4 { font-family: var(--serif); font-size: var(--t-md); font-weight: 600; }
+  .stakes p { color: var(--ink-soft); margin-top: 0.3rem; font-size: 1rem; }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+  .gallery.single { grid-template-columns: 1fr; }
+  .hifi { display: grid; gap: 0.75rem; padding-top: 1.5rem; }
+  .hifi > p { max-width: var(--measure); color: var(--ink-soft); }
+
+  .reflect { display: grid; gap: 2rem; }
+  .reflect > div { display: grid; grid-template-columns: 12rem 1fr; gap: 1rem 2rem; }
+  .reflect p { max-width: var(--measure); }
+  @media (max-width: 640px) { .reflect > div { grid-template-columns: 1fr; } }
+
+  /* ── More work ────────────────────────── */
+  .more { padding-block: clamp(4rem, 9vw, 7rem) clamp(3rem, 6vw, 5rem); }
+  .more h2 { font-size: var(--t-xl); margin-bottom: 2rem; }
+  .more__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .more__card { display: grid; gap: 0.4rem; text-decoration: none; }
+  .more__swatch {
+    position: relative; aspect-ratio: 16 / 9; overflow: hidden; margin-bottom: 0.6rem;
+    border-radius: 999px 999px 24px 24px;
+    transition: border-radius 0.6s var(--ease);
+  }
+  .more__card:hover .more__swatch { border-radius: 24px; }
+  .more__client { font-family: var(--serif); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; }
+  .more__card:hover .more__client { text-decoration: underline; }
+  .more__teaser { color: var(--ink-soft); }
+  @media (max-width: 640px) { .more__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const article = document.querySelector<HTMLElement>('.cs')!;
+
+  // Full story / quick read toggle. Remembered per visitor.
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-mode-btn]');
+  const hint = document.querySelector('[data-mode-hint]')!;
+  const setMode = (mode: string) => {
+    article.dataset.mode = mode;
+    btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modeBtn === mode)));
+    hint.textContent = mode === 'quick' ? 'The highlights, in about two minutes.' : 'About a ten minute read.';
+    document.querySelectorAll<HTMLElement>('.rail li.deep').forEach((li) => (li.hidden = mode === 'quick'));
+    try { localStorage.setItem('cs-mode', mode); } catch {}
+  };
+  btns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.modeBtn!)));
+  try { const saved = localStorage.getItem('cs-mode'); if (saved) setMode(saved); } catch {}
+
+  // Rail: highlight the section in view and fill the progress line.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  const progress = document.querySelector<HTMLElement>('[data-progress]');
+  const flow = document.querySelector<HTMLElement>('.flow')!;
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((l) => l.classList.toggle('active', l.dataset.toc === e.target.id));
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px' },
+  );
+  links.forEach((l) => { const s = document.getElementById(l.dataset.toc!); if (s) io.observe(s); });
+  const onScroll = () => {
+    if (!progress) return;
+    const r = flow.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (window.innerHeight * 0.5 - r.top) / r.height));
+    progress.style.height = `${p * 100}%`;
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

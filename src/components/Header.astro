@@ -1,0 +1,48 @@
+---
+import Wordmark from './Wordmark.astro';
+import { site } from '../site.config';
+const path = Astro.url.pathname;
+---
+<header class="header">
+  <div class="wrap header__inner">
+    <a href="/" class="home" aria-label="Rebecca Leigh, home"><Wordmark /></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="/#work" aria-current={path.startsWith('/work') ? 'page' : undefined}>Work</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href={site.resume}>Resume</a></li>
+        <li><a class="hello" href={`mailto:${site.email}`}>Say hello</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 40;
+    padding-block: 1.1rem;
+    transition: background-color 0.4s var(--ease), backdrop-filter 0.4s var(--ease);
+  }
+  :global(html.scrolled) .header {
+    background: color-mix(in srgb, var(--mist) 72%, transparent);
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  }
+  .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .home { text-decoration: none; }
+  ul { list-style: none; padding: 0; display: flex; gap: clamp(0.9rem, 2.4vw, 2rem); align-items: center; }
+  nav a { text-decoration: none; font-size: 1rem; font-weight: 500; }
+  nav a:not(.hello):hover, nav a[aria-current] { text-decoration: underline; }
+  .hello {
+    padding: 0.4rem 0.95rem 0.45rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    transition: background-color 0.25s, color 0.25s;
+  }
+  .hello:hover { background: var(--ink); color: var(--mist); }
+  @media (max-width: 640px) {
+    li:nth-child(2), li:nth-child(3) { display: none; }
+  }
+</style>

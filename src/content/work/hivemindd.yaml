@@ -1,0 +1,80 @@
+# Hivemindd
+# [Square brackets] = placeholder. Swap or delete.
+order: 3
+client: Hivemindd
+title: '[Project headline in plain words]'
+subtitle: '[The Hivemindd ____ experience]'
+teaser: '[One line on what you designed and for whom.]'
+year: '[2025]'
+sector: '[Sector]'
+palette: ['#e9a92e', '#f2715f', '#ffe3a3', '#fbefd9']
+cover:
+  alt: '[Describe the cover image]'
+  ratio: '16 / 9'
+
+tldr:
+  - '[The problem in one sentence.]'
+  - '[What you did, specifically you, in one sentence.]'
+  - '[The result in one sentence.]'
+
+overview: >-
+  [Two or three sentences. What Hivemindd is, who uses it, and what wasn't working when you showed up.]
+
+meta:
+  role: ['[Role]', '[Role]']
+  team: ['[Collaborator]', '[Collaborator]']
+  duration: '[X months]'
+  tools: [Figma]
+
+problem:
+  question: '[Your framing question.]'
+  stats:
+    - value: '[X]'
+      label: '[What the number means]'
+
+process:
+  - phase: Discover
+    detail: '[What you did]'
+  - phase: Define
+    detail: '[What you did]'
+  - phase: Design
+    detail: '[What you did]'
+  - phase: Deliver
+    detail: '[What you did]'
+
+impact:
+  - value: '[X%]'
+    label: '[Outcome]'
+  - value: '[X]'
+    label: '[Outcome]'
+
+challenges:
+  user: '[What was hard for users]'
+  business: '[What was hard for the business]'
+
+reframe:
+  hmw: '[How might we ...?]'
+
+decisions:
+  - title: '[Decision name]'
+    question: '[The question you had to answer]'
+    options:
+      - label: '[Option A]'
+        body: '[Why not]'
+      - label: '[Option B]'
+        chosen: true
+        body: '[Why this one]'
+
+walkthrough:
+  device: phone
+  steps:
+    - title: '[Screen 1]'
+      caption: '[What happens here]'
+    - title: '[Screen 2]'
+      caption: '[What happens here]'
+    - title: '[Screen 3]'
+      caption: '[What happens here]'
+
+reflection:
+  - title: What was hard
+    body: '[Say it plainly.]'
